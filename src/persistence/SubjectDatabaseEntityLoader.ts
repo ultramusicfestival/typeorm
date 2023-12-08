@@ -101,6 +101,9 @@ export class SubjectDatabaseEntityLoader {
                     },
                     // the soft-deleted entities should be included in the loaded entities for recover operation
                     withDeleted: true,
+                    lock: {
+                        mode: "pessimistic_write"
+                    }
                 }
 
                 // load database entities for all given ids
