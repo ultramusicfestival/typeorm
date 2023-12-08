@@ -116,6 +116,7 @@ export class EntityPersistExecutor {
                     await new SubjectDatabaseEntityLoader(
                         queryRunner,
                         subjects,
+                        this.options?.lock,
                     ).load(this.mode)
                     // console.timeEnd("loading...");
 

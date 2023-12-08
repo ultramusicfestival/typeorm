@@ -27,4 +27,22 @@ export interface RemoveOptions {
      * This option is needed to perform very big insertions when you have issues with underlying driver parameter number limitation.
      */
     chunk?: number
+
+    /**
+     * If set, acquires this lock when loading the existing database rows that
+     * back the removal operation. Only meaningful when the caller has already
+     * opened a transaction (or lets the persist executor open one).
+     */
+    lock?: {
+        mode:
+            | "pessimistic_read"
+            | "pessimistic_write"
+            | "dirty_read"
+            | "pessimistic_partial_write"
+            | "pessimistic_write_or_fail"
+            | "for_no_key_update"
+            | "for_key_share"
+        tables?: string[]
+        onLocked?: "nowait" | "skip_locked"
+    }
 }

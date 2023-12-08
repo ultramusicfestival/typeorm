@@ -4,6 +4,7 @@ import { QueryRunner } from "../query-runner/QueryRunner"
 import { FindManyOptions } from "../find-options/FindManyOptions"
 import { MongoRepository } from "../repository/MongoRepository"
 import { OrmUtils } from "../util/OrmUtils"
+import { SaveOptions } from "../repository/SaveOptions"
 
 /**
  * Loads database entities for all operate subjects which do not have database entity set.
@@ -19,6 +20,7 @@ export class SubjectDatabaseEntityLoader {
     constructor(
         protected queryRunner: QueryRunner,
         protected subjects: Subject[],
+        protected lock?: SaveOptions["lock"],
     ) {}
 
     // ---------------------------------------------------------------------
@@ -102,6 +104,7 @@ export class SubjectDatabaseEntityLoader {
                     },
                     // the soft-deleted entities should be included in the loaded entities for recover operation
                     withDeleted: true,
+                    ...(this.lock && { lock: this.lock }),
                 }
 
                 // load database entities for all given ids
