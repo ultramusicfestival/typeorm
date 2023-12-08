@@ -33,7 +33,7 @@ export class Gulpfile {
      */
     @Task()
     clean(cb: Function) {
-        return del(["./build/**"], cb);
+        return del(["./build/"], cb);
     }
 
     /**
@@ -89,17 +89,17 @@ export class Gulpfile {
             .pipe(tsProject());
 
         return [
-            tsResult.dts.pipe(gulp.dest("./build/package/browser")),
+            tsResult.dts.pipe(gulp.dest("./dist/browser")),
             tsResult.js
                 .pipe(sourcemaps.write(".", { sourceRoot: "", includeContent: true }))
-                .pipe(gulp.dest("./build/package/browser"))
+                .pipe(gulp.dest("./dist/browser"))
         ];
     }
 
     @Task()
     browserClearPackageDirectory(cb: Function) {
         return del([
-            "./build/browser/**"
+            "./build/browser/"
         ]);
     }
 
@@ -108,35 +108,35 @@ export class Gulpfile {
     // -------------------------------------------------------------------------
 
     /**
-     * Publishes a package to npm from ./build/package directory.
+     * Publishes a package to npm from ./dist directory.
      */
     @Task()
     packagePublish() {
         return gulp.src("package.json", { read: false })
             .pipe(shell([
-                "cd ./build/package && npm publish"
+                "cd ./dist && npm publish"
             ]));
     }
-    
+
     /**
-     * Packs a .tgz from ./build/package directory.
+     * Packs a .tgz from ./dist directory.
      */
     @Task()
     packagePack() {
         return gulp.src("package.json", { read: false })
             .pipe(shell([
-                "cd ./build/package && npm pack && mv -f typeorm-*.tgz .."
+                "cd ./dist && npm pack && mv -f typeorm-*.tgz .."
             ]));
     }
 
     /**
-     * Publishes a package to npm from ./build/package directory with @next tag.
+     * Publishes a package to npm from ./dist directory with @next tag.
      */
     @Task()
     packagePublishNext() {
         return gulp.src("package.json", { read: false })
             .pipe(shell([
-                "cd ./build/package && npm publish --tag next"
+                "cd ./dist && npm publish --tag next"
             ]));
     }
 
@@ -155,10 +155,10 @@ export class Gulpfile {
             .pipe(tsProject());
 
         return [
-            tsResult.dts.pipe(gulp.dest("./build/package")),
+            tsResult.dts.pipe(gulp.dest("./dist")),
             tsResult.js
                 .pipe(sourcemaps.write(".", { sourceRoot: "", includeContent: true }))
-                .pipe(gulp.dest("./build/package"))
+                .pipe(gulp.dest("./dist"))
         ];
     }
 
@@ -167,8 +167,8 @@ export class Gulpfile {
      */
     @Task()
     packageMoveCompiledFiles() {
-        return gulp.src("./build/package/src/**/*")
-            .pipe(gulp.dest("./build/package"));
+        return gulp.src("./dist/src/**/*")
+            .pipe(gulp.dest("./dist"));
     }
 
     /**
@@ -176,7 +176,7 @@ export class Gulpfile {
      */
     @Task()
     async packageCreateEsmIndex() {
-        const buildDir = "./build/package";
+        const buildDir = "./dist";
         const cjsIndex = require(`${buildDir}/index.js`);
         const cjsKeys = Object.keys(cjsIndex).filter(key => key !== "default" && !key.startsWith("__"));
 
@@ -194,10 +194,10 @@ export class Gulpfile {
      */
     @Task()
     packageReplaceReferences() {
-        return gulp.src("./build/package/**/*.d.ts")
+        return gulp.src("./dist/**/*.d.ts")
             .pipe(replace(`/// <reference types="node" />`, ""))
             .pipe(replace(`/// <reference types="chai" />`, ""))
-            .pipe(gulp.dest("./build/package"));
+            .pipe(gulp.dest("./dist"));
     }
 
     /**
@@ -206,7 +206,7 @@ export class Gulpfile {
     @Task()
     packageClearPackageDirectory(cb: Function) {
         return del([
-            "build/package/src/**"
+            "dist/src/"
         ], cb);
     }
 
@@ -217,7 +217,7 @@ export class Gulpfile {
     packagePreparePackageFile() {
         return gulp.src("./package.json")
             .pipe(replace("\"private\": true,", "\"private\": false,"))
-            .pipe(gulp.dest("./build/package"));
+            .pipe(gulp.dest("./dist"));
     }
 
     /**
@@ -227,7 +227,7 @@ export class Gulpfile {
     packageCopyReadme() {
         return gulp.src("./README.md")
             .pipe(replace(/```typescript([\s\S]*?)```/g, "```javascript$1```"))
-            .pipe(gulp.dest("./build/package"));
+            .pipe(gulp.dest("./dist"));
     }
 
     /**
@@ -236,7 +236,7 @@ export class Gulpfile {
     @Task()
     packageCopyShims() {
         return gulp.src(["./extra/typeorm-model-shim.js", "./extra/typeorm-class-transformer-shim.js"])
-            .pipe(gulp.dest("./build/package"));
+            .pipe(gulp.dest("./dist"));
     }
 
     /**

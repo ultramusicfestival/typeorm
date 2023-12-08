@@ -12,33 +12,45 @@
   "engines": {
     "node": ">= 12.9.0"
   },
+  "directories": {
+    "lib": "./dist"
+  },
+  "files": [
+    "./dist/**/*"
+  ],
   "exports": {
     ".": {
-      "types": "./index.d.ts",
+      "types": "./dist/index.d.ts",
       "node": {
-        "import": "./index.mjs",
-        "require": "./index.js",
-        "types": "./index.d.ts"
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.js",
+        "types": "./dist/index.d.ts"
       },
       "browser": {
-        "require": "./index.js",
-        "import": "./browser/index.js",
-        "default": "./index.js"
+        "require": "./dist/index.js",
+        "import": "./dist/browser/index.js",
+        "default": "./dist/index.js"
       }
     },
     "./browser": {
-      "types": "./index.d.ts",
-      "default": "./browser/index.js"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/browser/index.js"
     },
-    "./*.js": "./*.js",
+    "./util/*": {
+      "import": "./dist/util/*.js",
+      "require": "./dist/util/*.js",
+      "types": "./dist/util/*.d.ts"
+    },
+    "./*.js": "./dist/*.js",
     "./*": {
-      "require": "./*.js",
-      "import": "./*"
-    }
+      "import": "./dist/*.js",
+      "require": "./dist/*.js",
+      "types": "./dist/*.d.ts"
+    },
+    "./package.json": "./package.json"
   },
-  "main": "./index.js",
-  "module": "./index.mjs",
-  "types": "./index.d.ts",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "browser": {
     "./browser/connection/ConnectionOptionsReader.js": "./browser/platform/BrowserConnectionOptionsReaderDummy.js",
     "./browser/connection/options-reader/ConnectionOptionsXmlReader.js": "./browser/platform/BrowserConnectionOptionsReaderDummy.js",
@@ -127,6 +139,7 @@
     "mssql": "^9.1.1",
     "mysql": "^2.18.1",
     "mysql2": "^3.1.1",
+    "npm-run-all": "^4.1.5",
     "pg": "^8.9.0",
     "pg-query-stream": "^4.3.0",
     "prettier": "^2.8.3",
@@ -232,20 +245,24 @@
     "yargs": "^17.6.2"
   },
   "scripts": {
-    "test": "rimraf ./build && tsc && mocha --file ./build/compiled/test/utils/test-setup.js --bail --recursive --timeout 90000 ./build/compiled/test",
+    "test": "run-s clean:build compile && mocha --file ./build/compiled/test/utils/test-setup.js --bail --recursive --timeout 90000 ./build/compiled/test",
     "test-fast": "mocha --file ./build/compiled/test/utils/test-setup.js --bail --recursive --timeout 90000 ./build/compiled/test",
-    "compile": "rimraf ./build && tsc",
-    "watch": "./node_modules/.bin/tsc -w",
+    "clean:build": "rimraf ./build",
+    "clean:dist": "rimraf ./dist",
+    "clean": "run-s clean:*",
+    "compile": "tsc",
+    "watch": "tsc -w",
     "package": "gulp package",
     "pack": "gulp pack",
+    "prepare": "npm run package",
     "lint": "prettier --check \"./src/**/*.ts\" \"./test/**/*.ts\" \"./sample/**/*.ts\"",
     "format": "prettier --write --end-of-line auto \"./src/**/*.ts\" \"./test/**/*.ts\" \"./sample/**/*.ts\"",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 2"
   },
   "bin": {
-    "typeorm": "./cli.js",
-    "typeorm-ts-node-commonjs": "./cli-ts-node-commonjs.js",
-    "typeorm-ts-node-esm": "./cli-ts-node-esm.js"
+    "typeorm": "./dist/cli.js",
+    "typeorm-ts-node-commonjs": "./dist/cli-ts-node-commonjs.js",
+    "typeorm-ts-node-esm": "./dist/cli-ts-node-esm.js"
   },
   "funding": "https://opencollective.com/typeorm",
   "collective": {
