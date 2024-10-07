@@ -8,6 +8,7 @@ import { LoadEvent } from "./event/LoadEvent"
 import { SoftRemoveEvent } from "./event/SoftRemoveEvent"
 import { RecoverEvent } from "./event/RecoverEvent"
 import { AfterQueryEvent, BeforeQueryEvent } from "./event/QueryEvent"
+import {TransformEvent} from "./event/TransformEvent";
 
 /**
  * Classes that implement this interface are subscribers that subscribe for the specific events in the ORM.
@@ -88,6 +89,16 @@ export interface EntitySubscriberInterface<Entity = any> {
      * Called after entity is recovered in the database.
      */
     afterRecover?(event: RecoverEvent<Entity>): Promise<any> | void
+
+    /**
+     * Called before entity is transformed
+     */
+    beforeTransform?(event: TransformEvent<Entity>): Promise<any> | void
+
+    /**
+     * Called after entity is transformed
+     */
+    afterTransform?(event: TransformEvent<Entity>): Promise<any> | void
 
     /**
      * Called before transaction is started.

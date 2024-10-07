@@ -13,6 +13,8 @@ export type EventListenerType =
     | "after-soft-remove"
     | "before-recover"
     | "after-recover"
+    | "before-transform"
+    | "after-transform"
 
 /**
  * Provides a constants for each entity listener type.
@@ -29,4 +31,6 @@ export class EventListenerTypes {
     static AFTER_SOFT_REMOVE = "after-soft-remove" as const
     static BEFORE_RECOVER = "before-recover" as const
     static AFTER_RECOVER = "after-recover" as const
+    static BEFORE_TRANSFORM = "before-transform" as const
+    static AFTER_TRANSFORM = "after-transform" as const
 }

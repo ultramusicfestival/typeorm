@@ -1,12 +1,16 @@
 import { EntityMetadata } from "../../metadata/EntityMetadata"
 import { ObjectLiteral } from "../../common/ObjectLiteral"
 import { ObjectUtils } from "../../util/ObjectUtils"
+import { EntityManager } from "../../entity-manager/EntityManager";
+import { BroadcasterResult } from "../../subscriber/BroadcasterResult";
 
 /**
  * Transforms plain old javascript object
  * Entity is constructed based on its entity metadata.
  */
 export class PlainObjectToNewEntityTransformer {
+    constructor(private manager: EntityManager) {}
+
     // -------------------------------------------------------------------------
     // Public Methods
     // -------------------------------------------------------------------------
@@ -46,8 +50,17 @@ export class PlainObjectToNewEntityTransformer {
         // console.log("groupAndTransform entity:", entity);
         // console.log("groupAndTransform object:", object);
 
+        const broadcasterResult = new BroadcasterResult()
+
+        this.manager.queryRunner?.broadcaster.broadcastBeforeTransformEvent(
+            broadcasterResult,
+            metadata,
+            entity,
+            object,
+        )
+
         // copy regular column properties from the given object
-        metadata.columns.forEach((column) => {
+        metadata.nonVirtualColumns.forEach((column) => {
             const objectColumnValue = column.getEntityValue(object)
             if (objectColumnValue !== undefined)
                 column.setEntityValue(entity, objectColumnValue)
@@ -138,5 +151,12 @@ export class PlainObjectToNewEntityTransformer {
                 }
             })
         }
+
+        this.manager.queryRunner?.broadcaster.broadcastAfterTransformEvent(
+            broadcasterResult,
+            metadata,
+            entity,
+            object,
+        )
     }
 }

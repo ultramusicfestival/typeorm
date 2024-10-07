@@ -508,6 +508,16 @@ export class EntityMetadata {
     afterRecoverListeners: EntityListenerMetadata[] = []
 
     /**
+     * Listener metadatas with "BEFORE TRANSFORM" type.
+     */
+    beforeTransformListeners: EntityListenerMetadata[] = []
+
+    /**
+     * Listener metadatas with "AFTER TRANSFORM" type.
+     */
+    afterTransformListeners: EntityListenerMetadata[] = []
+
+    /**
      * Map of columns and relations of the entity.
      *
      * example: Post{ id: number, name: string, counterEmbed: { count: number }, category: Category }.
