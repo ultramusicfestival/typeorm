@@ -1006,6 +1006,9 @@ export class EntityMetadataBuilder {
         entityMetadata.afterRecoverListeners = entityMetadata.listeners.filter(
             (listener) => listener.type === EventListenerTypes.AFTER_RECOVER,
         )
+        entityMetadata.afterTransformListeners = entityMetadata.listeners.filter(
+            (listener) => listener.type === EventListenerTypes.AFTER_TRANSFORM,
+        )
         entityMetadata.beforeInsertListeners = entityMetadata.listeners.filter(
             (listener) => listener.type === EventListenerTypes.BEFORE_INSERT,
         )
@@ -1022,6 +1025,9 @@ export class EntityMetadataBuilder {
             )
         entityMetadata.beforeRecoverListeners = entityMetadata.listeners.filter(
             (listener) => listener.type === EventListenerTypes.BEFORE_RECOVER,
+        )
+        entityMetadata.beforeTransformListeners = entityMetadata.listeners.filter(
+            (listener) => listener.type === EventListenerTypes.BEFORE_TRANSFORM,
         )
         entityMetadata.indices = entityMetadata.embeddeds.reduce(
             (indices, embedded) => indices.concat(embedded.indicesFromTree),

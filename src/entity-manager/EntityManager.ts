@@ -76,12 +76,6 @@ export class EntityManager {
      */
     protected treeRepositories: TreeRepository<any>[] = []
 
-    /**
-     * Plain to object transformer used in create and merge operations.
-     */
-    protected plainObjectToEntityTransformer =
-        new PlainObjectToNewEntityTransformer()
-
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
@@ -289,7 +283,9 @@ export class EntityManager {
             )
 
         const mergeIntoEntity = metadata.create(this.queryRunner)
-        this.plainObjectToEntityTransformer.transform(
+        const plainObjectToEntityTransformer =
+            new PlainObjectToNewEntityTransformer(this.connection.manager)
+        plainObjectToEntityTransformer.transform(
             mergeIntoEntity,
             plainObjectOrObjects,
             metadata,
@@ -308,8 +304,10 @@ export class EntityManager {
     ): Entity {
         // todo: throw exception if entity manager is released
         const metadata = this.connection.getMetadata(entityClass)
+        const plainObjectToEntityTransformer =
+            new PlainObjectToNewEntityTransformer(this.connection.manager)
         entityLikes.forEach((object) =>
-            this.plainObjectToEntityTransformer.transform(
+            plainObjectToEntityTransformer.transform(
                 mergeIntoEntity,
                 object,
                 metadata,

@@ -76,6 +76,17 @@ interface BroadcasterEvents {
     ) => void
 
     Load: (metadata: EntityMetadata, entities: ObjectLiteral[]) => void
+
+    BeforeTransform: (
+        metadata: EntityMetadata,
+        entity: ObjectLiteral,
+        object: ObjectLiteral,
+    ) => void
+    AfterTransform: (
+        metadata: EntityMetadata,
+        entity: ObjectLiteral,
+        object: ObjectLiteral,
+    ) => void
 }
 
 /**
@@ -881,6 +892,97 @@ export class Broadcaster {
                         result.promises.push(executionResult)
                     result.count++
                 })
+            })
+        }
+    }
+
+    /**
+     * Broadcasts "BEFORE_TRANSFORM" event.
+     * Before transform event is executed before object is being transformed to entity.
+     * All subscribers and entity listeners who listened to this event will be executed at this point.
+     * Subscribers and entity listeners can return promises, it will wait until they are resolved.
+     *
+     * Note: this method has a performance-optimized code organization, do not change code structure.
+     */
+    broadcastBeforeTransformEvent(
+        result: BroadcasterResult,
+        metadata: EntityMetadata,
+        entity?: ObjectLiteral,
+        object?: ObjectLiteral,
+    ): void {
+        // todo: send relations too?
+        if (entity && metadata.beforeTransformListeners.length) {
+            metadata.beforeTransformListeners.forEach((listener) => {
+                if (listener.isAllowed(entity)) {
+                    const executionResult = listener.execute(entity)
+                    if (executionResult instanceof Promise)
+                        result.promises.push(executionResult)
+                    result.count++
+                }
+            })
+        }
+
+        if (this.queryRunner.connection.subscribers.length) {
+            this.queryRunner.connection.subscribers.forEach((subscriber) => {
+                if (
+                    this.isAllowedSubscriber(subscriber, metadata.target) &&
+                    subscriber.beforeTransform
+                ) {
+                    const executionResult = subscriber.beforeTransform({
+                        manager: this.queryRunner.manager,
+                        entity: entity,
+                        metadata: metadata,
+                        object: object,
+                    })
+                    if (executionResult instanceof Promise)
+                        result.promises.push(executionResult)
+                    result.count++
+                }
+            })
+        }
+    }
+
+    /**
+     * Broadcasts "AFTER_TRANSFORM" event.
+     * After transform event is executed after object is being transformed to entity.
+     * All subscribers and entity listeners who listened to this event will be executed at this point.
+     * Subscribers and entity listeners can return promises, it will wait until they are resolved.
+     *
+     * Note: this method has a performance-optimized code organization, do not change code structure.
+     */
+    broadcastAfterTransformEvent(
+        result: BroadcasterResult,
+        metadata: EntityMetadata,
+        entity?: ObjectLiteral,
+        object?: ObjectLiteral,
+    ): void {
+        if (entity && metadata.afterTransformListeners.length) {
+            metadata.afterTransformListeners.forEach((listener) => {
+                if (listener.isAllowed(entity)) {
+                    const executionResult = listener.execute(entity)
+                    if (executionResult instanceof Promise)
+                        result.promises.push(executionResult)
+                    result.count++
+                }
+            })
+        }
+
+        if (this.queryRunner.connection.subscribers.length) {
+            this.queryRunner.connection.subscribers.forEach((subscriber) => {
+                if (
+                    this.isAllowedSubscriber(subscriber, metadata.target) &&
+                    subscriber.afterTransform
+                ) {
+                    const executionResult = subscriber.afterTransform({
+                        manager: this.queryRunner.manager,
+                        entity: entity,
+                        metadata: metadata,
+                        object: object,
+                    })
+                    if (executionResult instanceof Promise)
+                        result.promises.push(executionResult)
+                    result.count++
+                }
             })
         }
     }
