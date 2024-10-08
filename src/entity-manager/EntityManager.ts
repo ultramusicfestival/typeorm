@@ -284,7 +284,7 @@ export class EntityManager {
 
         const mergeIntoEntity = metadata.create(this.queryRunner)
         const plainObjectToEntityTransformer =
-            new PlainObjectToNewEntityTransformer(this.connection.manager)
+            new PlainObjectToNewEntityTransformer(this)
         plainObjectToEntityTransformer.transform(
             mergeIntoEntity,
             plainObjectOrObjects,

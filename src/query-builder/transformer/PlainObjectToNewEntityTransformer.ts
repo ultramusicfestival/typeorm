@@ -52,7 +52,10 @@ export class PlainObjectToNewEntityTransformer {
 
         const broadcasterResult = new BroadcasterResult()
 
-        this.manager.queryRunner?.broadcaster.broadcastBeforeTransformEvent(
+        const queryRunner =
+            this.manager.queryRunner || this.manager.connection.createQueryRunner()
+
+        queryRunner.broadcaster.broadcastBeforeTransformEvent(
             broadcasterResult,
             metadata,
             entity,
@@ -152,7 +155,7 @@ export class PlainObjectToNewEntityTransformer {
             })
         }
 
-        this.manager.queryRunner?.broadcaster.broadcastAfterTransformEvent(
+        queryRunner.broadcaster.broadcastAfterTransformEvent(
             broadcasterResult,
             metadata,
             entity,
