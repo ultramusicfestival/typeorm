@@ -8,7 +8,7 @@ import { LoadEvent } from "./event/LoadEvent"
 import { SoftRemoveEvent } from "./event/SoftRemoveEvent"
 import { RecoverEvent } from "./event/RecoverEvent"
 import { AfterQueryEvent, BeforeQueryEvent } from "./event/QueryEvent"
-import {TransformEvent} from "./event/TransformEvent";
+import { TransformEvent } from "./event/TransformEvent"
 
 /**
  * Classes that implement this interface are subscribers that subscribe for the specific events in the ORM.

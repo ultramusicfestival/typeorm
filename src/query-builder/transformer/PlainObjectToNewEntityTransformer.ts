@@ -1,8 +1,8 @@
 import { EntityMetadata } from "../../metadata/EntityMetadata"
 import { ObjectLiteral } from "../../common/ObjectLiteral"
 import { ObjectUtils } from "../../util/ObjectUtils"
-import { EntityManager } from "../../entity-manager/EntityManager";
-import { BroadcasterResult } from "../../subscriber/BroadcasterResult";
+import { EntityManager } from "../../entity-manager/EntityManager"
+import { BroadcasterResult } from "../../subscriber/BroadcasterResult"
 
 /**
  * Transforms plain old javascript object
@@ -53,7 +53,8 @@ export class PlainObjectToNewEntityTransformer {
         const broadcasterResult = new BroadcasterResult()
 
         const queryRunner =
-            this.manager.queryRunner || this.manager.connection.createQueryRunner()
+            this.manager.queryRunner ||
+            this.manager.connection.createQueryRunner()
 
         queryRunner.broadcaster.broadcastBeforeTransformEvent(
             broadcasterResult,
